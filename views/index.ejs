@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- Declaração de tipo de documento HTML5 -->
+<html lang="pt-br"> <!-- Define o idioma da página como português do Brasil -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8, que permite caracteres especiais como acentos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Torna a página responsiva em dispositivos móveis -->
+    
+    <title>Financer - Dashboard</title> <!-- Título da página que aparecerá na aba do navegador -->
+    
+    <!-- Links para os arquivos de estilo CSS -->
+    <link rel="stylesheet" href="/css/header.css"> <!-- Estilos para o cabeçalho -->
+    <link rel="stylesheet" href="/css/cards.css"> <!-- Estilos para os cards de resumo -->
+    <link rel="stylesheet" href="/css/grafico.css"> <!-- Estilos para o gráfico -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- Estilos gerais da página -->
+</head>
+
+<body>
+
+    <!-- Inclusão do cabeçalho da página -->
+    <%- include('partials/header') %> <!-- Template dinâmico (provavelmente EJS) que inclui um cabeçalho comum -->
+    
+    <main>
+        <!-- Seção de resumo mensal -->
+        <section class="summary"> <!-- Contêiner para o resumo mensal -->
+            <h2>Resumo Mensal</h2> <!-- Título da seção -->
+            
+            <!-- Cards que exibem o resumo financeiro -->
+            <div class="summary-cards">
+                <!-- Card de Receitas -->
+                <div class="card income">
+                    <h3>Receitas</h3> <!-- Título do card -->
+                    <p id="total-income">R$ 0,00</p> <!-- Valor total das receitas (inicialmente 0) -->
+                </div>
+
+                <!-- Card de Despesas -->
+                <div class="card expense">
+                    <h3>Despesas</h3> <!-- Título do card -->
+                    <p id="total-expenses">R$ 0,00</p> <!-- Valor total das despesas (inicialmente 0) -->
+                </div>
+
+                <!-- Card de Saldo -->
+                <div class="card balance">
+                    <h3>Saldo</h3> <!-- Título do card -->
+                    <p id="current-balance">R$ 0,00</p> <!-- Saldo atual (inicialmente 0) -->
+                </div>
+            </div> <!-- Fim dos cards -->
+            
+            <!-- Seção para exibir gráficos -->
+            <section class="charts">
+                <h2>Gastos por Categoria</h2> <!-- Título da seção de gráficos -->
+                
+                <!-- Canvas onde o gráfico será desenhado -->
+                <canvas id="category-chart"></canvas> <!-- Gráfico de gastos por categoria, provavelmente gerado com Chart.js -->
+            </section> <!-- Fim dos gráficos -->
+        </section>
+    </main>
+
+    <!-- Importação da biblioteca Chart.js para criar gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js é uma biblioteca para criar gráficos interativos -->
+    
+    <!-- Linha comentada de script que pode ser usada para incluir lógica adicional -->
+    <!-- <script src="app.js"></script> --> <!-- Aqui você poderia incluir um script JavaScript para controlar interações ou dinâmicas -->
+</body>
+
+</html>

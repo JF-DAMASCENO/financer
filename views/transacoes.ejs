@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- Declaração do tipo de documento como HTML5 -->
+<html lang="pt-br"> <!-- Define o idioma da página como português do Brasil -->
+
+<head>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8, para garantir o suporte a caracteres especiais -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Torna a página responsiva (ajuste para dispositivos móveis) -->
+    
+    <!-- Links para arquivos de estilo CSS -->
+    <link rel="stylesheet" href="/css/header.css"> <!-- Estilos para o cabeçalho -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- Estilos gerais da página -->
+    <link rel="stylesheet" href="/css/transacoes.css"> <!-- Estilos específicos para a página de adicionar transação -->
+    
+    <title>Financer - Adicionar Transação</title> <!-- Título da página que aparecerá na aba do navegador -->
+</head>
+
+<body>
+
+    <!-- Inclusão do cabeçalho dinâmico através de um template -->
+    <%- include('partials/header') %> <!-- Instrução de template para incluir o cabeçalho da página -->
+    
+    <main>
+        <!-- Seção que contém o formulário de adição de transação -->
+        <section class="form-container"> <!-- Contêiner para o formulário -->
+            <h2>Adicionar Nova Transação</h2> <!-- Título da seção, indicando que é para adicionar uma nova transação -->
+            
+            <!-- Formulário que irá coletar as informações sobre a nova transação -->
+            <form id="transaction-form"> <!-- O formulário tem um ID para poder ser referenciado pelo JavaScript -->
+                
+                <!-- Campo para escolher o tipo de transação (despesa ou receita) -->
+                <div class="form-group"> <!-- Cada campo do formulário é envolvido em uma div com a classe "form-group" -->
+                    <label for="type">Tipo</label> <!-- Rótulo para o campo de tipo -->
+                    <select id="type" required> <!-- Dropdown para selecionar o tipo de transação -->
+                        <option value="expense">Despesa</option> <!-- Opção para despesa -->
+                        <option value="income">Receita</option> <!-- Opção para receita -->
+                    </select>
+                </div>
+
+                <!-- Campo para inserir o valor da transação -->
+                <div class="form-group">
+                    <label for="value">Valor</label> <!-- Rótulo para o campo de valor -->
+                    <input type="number" id="value" step="0.01" required> <!-- Campo numérico com precisão de 2 casas decimais -->
+                </div>
+
+                <!-- Campo para descrever a transação -->
+                <div class="form-group">
+                    <label for="description">Descrição</label> <!-- Rótulo para o campo de descrição -->
+                    <input type="text" id="description" required> <!-- Campo de texto para descrição -->
+                </div>
+
+                <!-- Campo para selecionar a categoria da transação -->
+                <div class="form-group">
+                    <label for="category">Categoria</label> <!-- Rótulo para o campo de categoria -->
+                    <select id="category" required> <!-- Dropdown para escolher a categoria da transação -->
+                        <option value="Moradia">Moradia</option> <!-- Opções de categorias -->
+                        <option value="Alimentação">Alimentação</option>
+                        <option value="Transporte">Transporte</option>
+                        <option value="Saúde">Saúde</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Educação">Educação</option>
+                        <option value="Compras">Compras</option>
+                        <option value="Salário">Salário</option>
+                    </select>
+                </div>
+
+                <!-- Campo para escolher a data da transação -->
+                <div class="form-group">
+                    <label for="date">Data</label> <!-- Rótulo para o campo de data -->
+                    <input type="date" id="date" required> <!-- Campo de data -->
+                </div>
+
+                <!-- Botão para submeter o formulário -->
+                <div class="form-group">
+                    <button type="submit">Salvar Transação</button> <!-- Botão para enviar o formulário -->
+                </div>
+            </form>
+        </section>
+    </main>
+
+</body>
+
+</html>

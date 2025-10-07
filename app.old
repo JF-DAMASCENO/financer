@@ -1,0 +1,148 @@
+// Dados de exemplo
+const transactions = [
+    { type: 'income', value: 3000, category: 'Salário' },
+    { type: 'expense', value: 500, category: 'Alimentação' },
+    { type: 'expense', value: 800, category: 'Moradia' },
+    { type: 'expense', value: 200, category: 'Transporte' },
+    { type: 'expense', value: 150, category: 'Lazer' },
+    { type: 'income', value: 200, category: 'Extra' }
+];
+
+// Funções para calcular totais
+function calculateTotals(data) {
+    let income = 0;
+    let expenses = 0;
+fda
+    data.forEach(transaction => {
+        if (transaction.type === 'income') {
+            income += transaction.value;
+        } else {
+            expenses += transaction.value;
+        }
+    });
+
+    return { income, expenses, balance: income - expenses };
+}
+
+// Atualizar a interface com os totais
+function updateUI() {
+    const totals = calculateTotals(transactions);
+    
+    document.getElementById('total-income').innerText = `R$ ${totals.income.toFixed(2)}`;
+    document.getElementById('total-expenses').innerText = `R$ ${totals.expenses.toFixed(2)}`;
+    document.getElementById('current-balance').innerText = `R$ ${totals.balance.toFixed(2)}`;
+}
+
+// Gerar o gráfico de pizza
+function createChart() {
+    const categories = {};
+    transactions.filter(t => t.type === 'expense').forEach(t => {
+        categories[t.category] = (categories[t.category] || 0) + t.value;
+    });
+
+    const chartData = {
+        labels: Object.keys(categories),
+        datasets: [{
+            data: Object.values(categories),
+            backgroundColor: [
+                '#dc3545', '#ffc107', '#28a745', '#007bff', '#6c757d', '#17a2b8'
+            ]
+        }]
+    };
+
+    const ctx = document.getElementById('category-chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: false,
+                }
+            }
+        }
+    });
+}
+
+// Chamadas iniciais ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    updateUI();
+    createChart();
+
+    
+});
+
+document.getElementById('transaction-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
+
+    // Coleta os valores do formulário
+    const type = document.getElementById('type').value;
+    const value = parseFloat(document.getElementById('value').value);
+    const description = document.getElementById('description').value;
+    const category = document.getElementById('category').value;
+    const date = document.getElementById('date').value;
+
+    // Cria um objeto para a nova transação
+    const newTransaction = {
+        type,
+        value,
+        description,
+        category,
+        date
+    };
+
+    // Aqui, em um projeto real, você enviaria esses dados para o seu backend.
+    // Por enquanto, vamos apenas exibi-los no console para simular o processo.
+    console.log('Nova transação a ser salva:', newTransaction);
+    
+    // Opcional: Limpar o formulário após o envio
+    document.getElementById('transaction-form').reset();
+    
+    // Opcional: Exibir uma mensagem de sucesso para o usuário
+    alert('Transação salva com sucesso!');
+});
+
+// Este código é do historico 
+
+// Dados de exemplo (simulando um banco de dados)
+const transactions = [
+    { date: '2024-11-20', description: 'Supermercado', category: 'Alimentação', type: 'expense', value: 250.00 },
+    { date: '2024-11-19', description: 'Salário', category: 'Salário', type: 'income', value: 3000.00 },
+    { date: '2024-11-18', description: 'Cinema', category: 'Lazer', type: 'expense', value: 80.00 },
+    { date: '2024-11-17', description: 'Conta de Luz', category: 'Moradia', type: 'expense', value: 120.50 }
+];
+
+// Função para renderizar as transações na tabela
+function renderTransactions() {
+    const tableBody = document.getElementById('transaction-list');
+    
+    // Limpa a tabela antes de preencher
+    tableBody.innerHTML = '';
+    
+    transactions.forEach(transaction => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${transaction.date}</td>
+            <td>${transaction.description}</td>
+            <td>${transaction.category}</td>
+            <td class="transaction-type ${transaction.type}">${transaction.type === 'expense' ? 'Despesa' : 'Receita'}</td>
+            <td>R$ ${transaction.value.toFixed(2)}</td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Chame a função quando a página de histórico for carregada
+// Adicione este código à parte final do seu arquivo app.js
+document.addEventListener('DOMContentLoaded', () => {
+    // Verifique se o elemento 'transaction-list' existe na página atual
+    if (document.getElementById('transaction-list')) {
+        renderTransactions();
+    }
+});
