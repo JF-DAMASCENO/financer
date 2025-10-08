@@ -1,20 +1,186 @@
 const express = require('express');
 const router = express.Router();
 
-// Rota principal
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Dashboard' });
+// Dados iniciais
+let transacoes = [
+    { 
+        id: 1, 
+        data: '2024-01-15', 
+        descricao: 'Salário', 
+        categoria: 'Receita', 
+        tipo: 'Entrada', 
+        valor: 3000.00 
+    },
+    { 
+        id: 2, 
+        data: '2024-01-16', 
+        descricao: 'Aluguel', 
+        categoria: 'Moradia', 
+        tipo: 'Saída', 
+        valor: 1200.00 
+    }
+];
+
+// Função para calcular totais
+function calcularTotais(transacoes) {
+    const entradas = transacoes
+        .filter(t => t.tipo === 'Entrada')
+        .reduce((sum, t) => sum + t.valor, 0);
+    
+    const saidas = transacoes
+        .filter(t => t.tipo === 'Saída')
+        .reduce((sum, t) => sum + t.valor, 0);
+    
+    return {
+        entradas: entradas.toFixed(2),
+        saidas: saidas.toFixed(2),
+        saldo: (entradas - saidas).toFixed(2)
+    };
+}
+
+// ===== ROTAS DO MENU =====
+
+// Rota principal - Dashboard
+router.get('/principal', (req, res) => {
+    try {
+        const totais = calcularTotais(transacoes);
+        
+        res.render('index', {
+            titulo: 'Controle Financeiro - Dashboard',
+            transacoes: transacoes,
+            totais: totais,
+            currentPage: '/principal'
+        });
+    } catch (error) {
+        console.error('Erro na rota principal:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
 });
 
-
-// Rota transacoes
+// Rota para página de transações (formulário dedicado)
 router.get('/transacoes', (req, res) => {
-  res.render('transacoes', { title: 'Transações' });
+    try {
+        res.render('transacoes', {
+            titulo: 'Adicionar Transação',
+            currentPage: '/transacoes'
+        });
+    } catch (error) {
+        console.error('Erro na rota transacoes:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
 });
 
-// Rota historico
+// Rota para histórico
 router.get('/historico', (req, res) => {
-  res.render('historico', { title: 'Historico' });
+    try {
+        const totais = calcularTotais(transacoes);
+        
+        res.render('historico', {
+            titulo: 'Histórico de Transações',
+            transacoes: transacoes,
+            totais: totais,
+            currentPage: '/historico'
+        });
+    } catch (error) {
+        console.error('Erro na rota historico:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+});
+
+// ===== ROTAS DE LOGIN =====
+
+// Rota para a página de login
+router.get('/login', (req, res) => {
+    try {
+        res.render('login', {
+            titulo: 'Login - FinancerPro',
+            currentPage: '/login'
+        });
+    } catch (error) {
+        console.error('Erro na rota login:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+});
+
+// Rota para processar o login
+router.post('/login', (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        // Simulação de autenticação (substitua pela sua lógica real)
+        if (email && password) {
+            // Login bem-sucedido
+            res.redirect('/principal');
+        } else {
+            // Login falhou
+            res.redirect('/login?error=1');
+        }
+    } catch (error) {
+        console.error('Erro no processo de login:', error);
+        res.redirect('/login?error=1');
+    }
+});
+
+// Rota para logout
+router.get('/logout', (req, res) => {
+    // Aqui você limparia a sessão do usuário
+    res.redirect('/login');
+});
+
+// ===== ROTAS DE AÇÃO =====
+
+// Adicionar transação (do formulário principal)
+router.post('/principal/adicionar', (req, res) => {
+    try {
+        const novaTransacao = {
+            id: transacoes.length > 0 ? Math.max(...transacoes.map(t => t.id)) + 1 : 1,
+            data: req.body.data,
+            descricao: req.body.descricao,
+            categoria: req.body.categoria,
+            tipo: req.body.tipo,
+            valor: parseFloat(req.body.valor)
+        };
+        
+        transacoes.push(novaTransacao);
+        res.redirect('/principal');
+    } catch (error) {
+        console.error('Erro ao adicionar transação:', error);
+        res.redirect('/principal');
+    }
+});
+
+// Adicionar transação (da página dedicada)
+router.post('/transacoes/adicionar', (req, res) => {
+    try {
+        const novaTransacao = {
+            id: transacoes.length > 0 ? Math.max(...transacoes.map(t => t.id)) + 1 : 1,
+            data: req.body.data,
+            descricao: req.body.descricao,
+            categoria: req.body.categoria,
+            tipo: req.body.tipo,
+            valor: parseFloat(req.body.valor)
+        };
+        
+        transacoes.push(novaTransacao);
+        res.redirect('/historico');
+    } catch (error) {
+        console.error('Erro ao adicionar transação:', error);
+        res.redirect('/transacoes');
+    }
+});
+
+// Excluir transação
+router.get('/excluir/:id', (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        transacoes = transacoes.filter(t => t.id !== id);
+        
+        const referer = req.get('Referer') || '/principal';
+        res.redirect(referer);
+    } catch (error) {
+        console.error('Erro ao excluir transação:', error);
+        res.redirect('/principal');
+    }
 });
 
 module.exports = router;

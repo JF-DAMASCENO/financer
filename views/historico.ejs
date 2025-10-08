@@ -1,43 +1,281 @@
-<!DOCTYPE html> <!-- Declaração de tipo de documento HTML5 -->
-<html lang="pt-br"> <!-- Define o idioma da página como português do Brasil -->
-
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8 (suporte a caracteres especiais) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Torna a página responsiva em dispositivos móveis -->
-    
-    <!-- Links para arquivos de estilo CSS -->
-    <link rel="stylesheet" href="/css/header.css"> <!-- Estilos para o cabeçalho -->
-    <link rel="stylesheet" href="/css/style.css"> <!-- Estilos gerais da página -->
-    <link rel="stylesheet" href="/css/historico.css"> <!-- Estilos específicos para a página de histórico -->
-    
-    <title>Financer - Histórico de Transações</title> <!-- Título da página que aparecerá na aba do navegador -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/historico.css">
 </head>
 
 <body>
-    <!-- Inclusão de um cabeçalho (provavelmente dinâmico) -->
-    <%- include('partials/header') %> <!-- Instrução de template para incluir o cabeçalho -->
-    
-    <main>
-        <!-- Seção principal que contém a tabela de transações -->
-        <section class="history-container">
-            <h2>Histórico de Transações</h2> <!-- Título da seção -->
-            <table> <!-- Tabela que vai exibir as transações -->
-                <thead>
-                    <tr>
-                        <!-- Cabeçalhos das colunas da tabela -->
-                        <th>Data</th>
-                        <th>Descrição</th>
-                        <th>Categoria</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
-                <tbody id="transaction-list"> <!-- Corpo da tabela, onde as transações serão inseridas dinamicamente -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+    <!-- Barra de Navegação -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/principal" class="nav-brand">FinancerPro</a>
+            
+            <button class="nav-toggle" id="navToggle">
+                <span class="nav-icon">☰</span>
+            </button>
 
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="/principal" class="nav-link <%= currentPage === '/principal' ? 'active' : '' %>">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/transacoes" class="nav-link <%= currentPage === '/transacoes' ? 'active' : '' %>">
+                        <span class="nav-icon">💸</span>
+                        Adicionar Transação
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/historico" class="nav-link <%= currentPage === '/historico' ? 'active' : '' %>">
+                        <span class="nav-icon">📈</span>
+                        Histórico
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><%= titulo %></h1>
+            <p class="page-subtitle">Visualize todo o histórico de transações</p>
+        </div>
+        
+        <!-- Estatísticas Rápidas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📥</div>
+                <div class="stat-info">
+                    <div class="stat-label">Entradas</div>
+                    <div class="stat-value">R$ <%= totais.entradas %></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📤</div>
+                <div class="stat-info">
+                    <div class="stat-label">Saídas</div>
+                    <div class="stat-value">R$ <%= totais.saidas %></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-info">
+                    <div class="stat-label">Saldo</div>
+                    <div class="stat-value">R$ <%= totais.saldo %></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <div class="stat-label">Total Transações</div>
+                    <div class="stat-value"><%= transacoes.length %></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-container">
+            <div class="filters-header">
+                <h3>Filtros</h3>
+                <button class="btn-clear-filters" id="clearFilters">
+                    <span>🔄 Limpar Filtros</span>
+                </button>
+            </div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="filterTipo">Tipo</label>
+                    <select id="filterTipo" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="Entrada">Entrada</option>
+                        <option value="Saída">Saída</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterCategoria">Categoria</label>
+                    <select id="filterCategoria" class="filter-select">
+                        <option value="">Todas</option>
+                        <option value="Receita">Receita</option>
+                        <option value="Moradia">Moradia</option>
+                        <option value="Alimentação">Alimentação</option>
+                        <option value="Transporte">Transporte</option>
+                        <option value="Saúde">Saúde</option>
+                        <option value="Educação">Educação</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterData">Período</label>
+                    <select id="filterData" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="trimestre">Este Trimestre</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterOrdenar">Ordenar por</label>
+                    <select id="filterOrdenar" class="filter-select">
+                        <option value="data-desc">Data (Mais Recente)</option>
+                        <option value="data-asc">Data (Mais Antiga)</option>
+                        <option value="valor-desc">Valor (Maior)</option>
+                        <option value="valor-asc">Valor (Menor)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Histórico -->
+        <div class="table-section">
+            <div class="section-header">
+                <h3>Histórico Completo</h3>
+                <div class="section-actions">
+                    <span class="transactions-count" id="transactionsCount">
+                        <%= transacoes.length %> transações encontradas
+                    </span>
+                    <button class="btn-export" id="btnExport">
+                        <span>📊 Exportar</span>
+                    </button>
+                </div>
+            </div>
+            
+            <% if (transacoes && transacoes.length > 0) { %>
+                <div class="table-container">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th data-sort="data">Data 📅</th>
+                                <th data-sort="descricao">Descrição</th>
+                                <th data-sort="categoria">Categoria</th>
+                                <th data-sort="tipo">Tipo</th>
+                                <th data-sort="valor">Valor R$</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% transacoes.forEach(function(transacao) { %>
+                                <tr class="transaction-row" 
+                                    data-tipo="<%= transacao.tipo %>" 
+                                    data-categoria="<%= transacao.categoria %>"
+                                    data-data="<%= transacao.data %>"
+                                    data-valor="<%= transacao.valor %>">
+                                    <td class="transaction-date">
+                                        <div class="date-display">
+                                            <span class="date-day"><%= new Date(transacao.data).getDate() %></span>
+                                            <span class="date-month"><%= new Date(transacao.data).toLocaleDateString('pt-BR', { month: 'short' }) %></span>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-desc">
+                                        <div class="desc-text"><%= transacao.descricao %></div>
+                                        <% if (transacao.descricao.length > 30) { %>
+                                            <div class="desc-tooltip"><%= transacao.descricao %></div>
+                                        <% } %>
+                                    </td>
+                                    <td class="transaction-category">
+                                        <span class="category-badge category-<%= transacao.categoria.toLowerCase() %>">
+                                            <%= transacao.categoria %>
+                                        </span>
+                                    </td>
+                                    <td class="transaction-type">
+                                        <span class="type-badge type-<%= transacao.tipo.toLowerCase() %>">
+                                            <span class="type-icon">
+                                                <%= transacao.tipo === 'Entrada' ? '⬆️' : '⬇️' %>
+                                            </span>
+                                            <%= transacao.tipo %>
+                                        </span>
+                                    </td>
+                                    <td class="transaction-value">
+                                        <span class="value-amount <%= transacao.tipo.toLowerCase() %>">
+                                            R$ <%= transacao.valor.toFixed(2) %>
+                                        </span>
+                                    </td>
+                                    <td class="transaction-actions">
+                                        <div class="actions-container">
+                                            <button class="btn-action btn-edit" title="Editar">
+                                                <span>✏️</span>
+                                            </button>
+                                            <a href="/excluir/<%= transacao.id %>" 
+                                               class="btn-action btn-delete" 
+                                               title="Excluir"
+                                               onclick="return confirm('Tem certeza que deseja excluir esta transação?')">
+                                                <span>🗑️</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>Nenhuma transação encontrada</h3>
+                    <p>Comece adicionando sua primeira transação ao sistema</p>
+                    <a href="/transacoes" class="btn-primary">
+                        <span>➕ Adicionar Primeira Transação</span>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Resumo por Categoria -->
+        <% if (transacoes && transacoes.length > 0) { %>
+            <div class="categories-section">
+                <h3>Resumo por Categoria</h3>
+                <div class="categories-grid">
+                    <% 
+                        const categorias = {};
+                        transacoes.forEach(transacao => {
+                            if (!categorias[transacao.categoria]) {
+                                categorias[transacao.categoria] = { entradas: 0, saidas: 0 };
+                            }
+                            if (transacao.tipo === 'Entrada') {
+                                categorias[transacao.categoria].entradas += transacao.valor;
+                            } else {
+                                categorias[transacao.categoria].saidas += transacao.valor;
+                            }
+                        });
+                    %>
+                    <% Object.keys(categorias).forEach(categoria => { %>
+                        <div class="category-card">
+                            <div class="category-header">
+                                <h4><%= categoria %></h4>
+                                <span class="category-total">
+                                    R$ <%= (categorias[categoria].entradas - categorias[categoria].saidas).toFixed(2) %>
+                                </span>
+                            </div>
+                            <div class="category-stats">
+                                <div class="category-stat">
+                                    <span class="stat-label">Entradas:</span>
+                                    <span class="stat-value positive">R$ <%= categorias[categoria].entradas.toFixed(2) %></span>
+                                </div>
+                                <div class="category-stat">
+                                    <span class="stat-label">Saídas:</span>
+                                    <span class="stat-value negative">R$ <%= categorias[categoria].saidas.toFixed(2) %></span>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="/js/historico.js"></script>
 </body>
-
 </html>

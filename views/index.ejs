@@ -1,65 +1,196 @@
-<!DOCTYPE html> <!-- Declaração de tipo de documento HTML5 -->
-<html lang="pt-br"> <!-- Define o idioma da página como português do Brasil -->
-
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8, que permite caracteres especiais como acentos -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Torna a página responsiva em dispositivos móveis -->
-    
-    <title>Financer - Dashboard</title> <!-- Título da página que aparecerá na aba do navegador -->
-    
-    <!-- Links para os arquivos de estilo CSS -->
-    <link rel="stylesheet" href="/css/header.css"> <!-- Estilos para o cabeçalho -->
-    <link rel="stylesheet" href="/css/cards.css"> <!-- Estilos para os cards de resumo -->
-    <link rel="stylesheet" href="/css/grafico.css"> <!-- Estilos para o gráfico -->
-    <link rel="stylesheet" href="/css/style.css"> <!-- Estilos gerais da página -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+   
 </head>
 
 <body>
-
-    <!-- Inclusão do cabeçalho da página -->
-    <%- include('partials/header') %> <!-- Template dinâmico (provavelmente EJS) que inclui um cabeçalho comum -->
-    
-    <main>
-        <!-- Seção de resumo mensal -->
-        <section class="summary"> <!-- Contêiner para o resumo mensal -->
-            <h2>Resumo Mensal</h2> <!-- Título da seção -->
+    <!-- Barra de Navegação -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/principal" class="nav-brand">FinancerPro</a>
             
-            <!-- Cards que exibem o resumo financeiro -->
-            <div class="summary-cards">
-                <!-- Card de Receitas -->
-                <div class="card income">
-                    <h3>Receitas</h3> <!-- Título do card -->
-                    <p id="total-income">R$ 0,00</p> <!-- Valor total das receitas (inicialmente 0) -->
-                </div>
+            <button class="nav-toggle" id="navToggle">
+                <span class="nav-icon">☰</span>
+            </button>
 
-                <!-- Card de Despesas -->
-                <div class="card expense">
-                    <h3>Despesas</h3> <!-- Título do card -->
-                    <p id="total-expenses">R$ 0,00</p> <!-- Valor total das despesas (inicialmente 0) -->
-                </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="/principal" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./transacoes" class="nav-link">
+                        <span class="nav-icon">💸</span>
+                        Adicionar Transação
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./historico" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Histórico
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+               
+            </ul>
 
-                <!-- Card de Saldo -->
-                <div class="card balance">
-                    <h3>Saldo</h3> <!-- Título do card -->
-                    <p id="current-balance">R$ 0,00</p> <!-- Saldo atual (inicialmente 0) -->
+            <div class="user-menu">
+                <div class="user-avatar">JS</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1><%= titulo %></h1>
+        
+        <div class="resumo">
+            <div class="card entradas">
+                <h3>Entradas</h3>
+                <div class="valor">R$ <%= totais.entradas %></div>
+            </div>
+            <div class="card saidas">
+                <h3>Saídas</h3>
+                <div class="valor">R$ <%= totais.saidas %></div>
+            </div>
+            <div class="card saldo">
+                <h3>Saldo</h3>
+                <div class="valor">R$ <%= totais.saldo %></div>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <h3>Nova Transação</h3>
+            <form action="/principal/adicionar" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data:</label>
+                        <input type="date" name="data" required value="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição:</label>
+                        <input type="text" name="descricao" placeholder="Descrição" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <select name="categoria" required>
+                            <option value="">Selecione</option>
+                            <option value="Receita">Receita</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo:</label>
+                        <select name="tipo" required>
+                            <option value="">Selecione</option>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Saída">Saída</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor R$:</label>
+                        <input type="number" name="valor" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
-            </div> <!-- Fim dos cards -->
-            
-            <!-- Seção para exibir gráficos -->
-            <section class="charts">
-                <h2>Gastos por Categoria</h2> <!-- Título da seção de gráficos -->
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
+        
+        <h3>Transações</h3>
+        <% if (transacoes && transacoes.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% transacoes.forEach(function(transacao) { %>
+                        <tr>
+                            <td><%= transacao.data %></td>
+                            <td><%= transacao.descricao %></td>
+                            <td><%= transacao.categoria %></td>
+                            <td class="<%= transacao.tipo.toLowerCase() %>"><%= transacao.tipo %></td>
+                            <td class="<%= transacao.tipo.toLowerCase() %>">R$ <%= transacao.valor.toFixed(2) %></td>
+                            <td>
+                                <a href="/principal/excluir/<%= transacao.id %>" class="btn-excluir" onclick="return confirm('Excluir?')">Excluir</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>Nenhuma transação cadastrada.</p>
+        <% } %>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.innerHTML = navMenu.classList.contains('active') ? 
+                '<span class="nav-icon">✕</span>' : 
+                '<span class="nav-icon">☰</span>';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+                navToggle.innerHTML = '<span class="nav-icon">☰</span>';
+            }
+        });
+
+        // Active link management
+        const currentPage = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', () => {
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
                 
-                <!-- Canvas onde o gráfico será desenhado -->
-                <canvas id="category-chart"></canvas> <!-- Gráfico de gastos por categoria, provavelmente gerado com Chart.js -->
-            </section> <!-- Fim dos gráficos -->
-        </section>
-    </main>
+                // Close mobile menu after click
+                if (window.innerWidth <= 968) {
+                    navMenu.classList.remove('active');
+                    navToggle.innerHTML = '<span class="nav-icon">☰</span>';
+                }
+            });
+        });
 
-    <!-- Importação da biblioteca Chart.js para criar gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js é uma biblioteca para criar gráficos interativos -->
-    
-    <!-- Linha comentada de script que pode ser usada para incluir lógica adicional -->
-    <!-- <script src="app.js"></script> --> <!-- Aqui você poderia incluir um script JavaScript para controlar interações ou dinâmicas -->
+        // Smooth scroll and animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add loading animation
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 </body>
-
 </html>
