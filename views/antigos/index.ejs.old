@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-
-<!-- Head -->
-<%- include('./partials/head') %>
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+   
+</head>
 
 <body>
 
@@ -32,6 +35,39 @@
 
 
         
+        <h3>Transações</h3>
+        <% if (transacoes && transacoes.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% transacoes.forEach(function(transacao) { %>
+                        <tr>
+                            <td><%= transacao.data %></td>
+                            <td><%= transacao.descricao %></td>
+                            <td><%= transacao.categoria %></td>
+                            <td class="<%= transacao.tipo.toLowerCase() %>"><%= transacao.tipo %></td>
+                            <td class="<%= transacao.tipo.toLowerCase() %>">R$ <%= transacao.valor.toFixed(2) %></td>
+                            <td>
+                                <a href="/principal/excluir/<%= transacao.id %>" class="btn-excluir" onclick="return confirm('Excluir?')">Excluir</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>Nenhuma transação cadastrada.</p>
+        <% } %>
+    </div>
+
     <script>
         // Mobile Menu Toggle
         const navToggle = document.getElementById('navToggle');

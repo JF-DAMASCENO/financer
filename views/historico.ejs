@@ -1,281 +1,418 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= titulo %></title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/historico.css">
-</head>
+    
+<!-- Head -->
+<%- include('./partials/head') %>
 
 <body>
-    <!-- Barra de Navegação -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/principal" class="nav-brand">FinancerPro</a>
+
+    <!-- barra de navegação -->
+    <%- include('./partials/navbar') %>
+
+    <!-- Botão para abrir o modal -->
+    <button id="openModalBtn" class="botao-padrao btn-margem">Adicionar Transação</button>
+
+
+    <!-- Inicio do modal -->
+    <!-- Modal será mostrado quando uma nova transação será inserida ou uma transação cadastrada for modificada -->
+    <div id="modalContainer" class="modal-container" data-tipo="">
+        <div class="modal-content form-container">
+            <h2 id="tituloModal">Nova Transação</h2>
             
-            <button class="nav-toggle" id="navToggle">
-                <span class="nav-icon">☰</span>
+            <form action="/principal/adicionar" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data:</label>
+                        <input type="date" name="data" required value="<%= new Date().toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição:</label>
+                        <input type="text" name="descricao" placeholder="Descrição" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <select name="categoria" required>
+                            <option value="">Selecione</option>
+                            <option value="Receita">Receita</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo:</label>
+                        <select name="tipo" required>
+                            <option value="">Selecione</option>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Saída">Saída</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor R$:</label>
+                        <input type="number" name="valor" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="modButtons">
+                    <button id="acaoModalBtn"  type="submit" class="botao-padrao">Adicionar</button>
+                    <button id="closeModalBtn" class="botao-padrao">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Final do modal -->
+
+
+    <!-- Filtros -->
+    <div class="filters-container">
+        <div class="filters-header">
+            <h3>Filtros</h3>
+            <button class="botao-padrao" id="clearFilters">
+                <span>🔄 Limpar Filtros</span>
             </button>
-
-            <ul class="nav-menu" id="navMenu">
-                <li class="nav-item">
-                    <a href="/principal" class="nav-link <%= currentPage === '/principal' ? 'active' : '' %>">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                        <span class="nav-indicator"></span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/transacoes" class="nav-link <%= currentPage === '/transacoes' ? 'active' : '' %>">
-                        <span class="nav-icon">💸</span>
-                        Adicionar Transação
-                        <span class="nav-indicator"></span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/historico" class="nav-link <%= currentPage === '/historico' ? 'active' : '' %>">
-                        <span class="nav-icon">📈</span>
-                        Histórico
-                        <span class="nav-indicator"></span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="user-menu">
-                <div class="user-avatar">JS</div>
+        </div>
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label for="filterTipo">Tipo</label>
+                <select id="filterTipo" class="filter-select">
+                    <option value="">Todos</option>
+                    <option value="Entrada">Entrada</option>
+                    <option value="Saída">Saída</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterCategoria">Categoria</label>
+                <select id="filterCategoria" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Receita">Receita</option>
+                    <option value="Moradia">Moradia</option>
+                    <option value="Alimentação">Alimentação</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Saúde">Saúde</option>
+                    <option value="Educação">Educação</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterData">Período</label>
+                <select id="filterData" class="filter-select">
+                    <option value="">Todos</option>
+                    <option value="hoje">Hoje</option>
+                    <option value="semana">Esta Semana</option>
+                    <option value="mes">Este Mês</option>
+                    <option value="trimestre">Este Trimestre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterOrdenar">Ordenar por</label>
+                <select id="filterOrdenar" class="filter-select">
+                    <option value="data-desc">Data (Mais Recente)</option>
+                    <option value="data-asc">Data (Mais Antiga)</option>
+                    <option value="valor-desc">Valor (Maior)</option>
+                    <option value="valor-asc">Valor (Menor)</option>
+                </select>
             </div>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="page-header">
-            <h1><%= titulo %></h1>
-            <p class="page-subtitle">Visualize todo o histórico de transações</p>
-        </div>
-        
-        <!-- Estatísticas Rápidas -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">📥</div>
-                <div class="stat-info">
-                    <div class="stat-label">Entradas</div>
-                    <div class="stat-value">R$ <%= totais.entradas %></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📤</div>
-                <div class="stat-info">
-                    <div class="stat-label">Saídas</div>
-                    <div class="stat-value">R$ <%= totais.saidas %></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⚖️</div>
-                <div class="stat-info">
-                    <div class="stat-label">Saldo</div>
-                    <div class="stat-value">R$ <%= totais.saldo %></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📋</div>
-                <div class="stat-info">
-                    <div class="stat-label">Total Transações</div>
-                    <div class="stat-value"><%= transacoes.length %></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filtros -->
-        <div class="filters-container">
-            <div class="filters-header">
-                <h3>Filtros</h3>
-                <button class="btn-clear-filters" id="clearFilters">
-                    <span>🔄 Limpar Filtros</span>
-                </button>
-            </div>
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label for="filterTipo">Tipo</label>
-                    <select id="filterTipo" class="filter-select">
-                        <option value="">Todos</option>
-                        <option value="Entrada">Entrada</option>
-                        <option value="Saída">Saída</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterCategoria">Categoria</label>
-                    <select id="filterCategoria" class="filter-select">
-                        <option value="">Todas</option>
-                        <option value="Receita">Receita</option>
-                        <option value="Moradia">Moradia</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Saúde">Saúde</option>
-                        <option value="Educação">Educação</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Outros">Outros</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterData">Período</label>
-                    <select id="filterData" class="filter-select">
-                        <option value="">Todos</option>
-                        <option value="hoje">Hoje</option>
-                        <option value="semana">Esta Semana</option>
-                        <option value="mes">Este Mês</option>
-                        <option value="trimestre">Este Trimestre</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterOrdenar">Ordenar por</label>
-                    <select id="filterOrdenar" class="filter-select">
-                        <option value="data-desc">Data (Mais Recente)</option>
-                        <option value="data-asc">Data (Mais Antiga)</option>
-                        <option value="valor-desc">Valor (Maior)</option>
-                        <option value="valor-asc">Valor (Menor)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabela de Histórico -->
-        <div class="table-section">
-            <div class="section-header">
-                <h3>Histórico Completo</h3>
-                <div class="section-actions">
-                    <span class="transactions-count" id="transactionsCount">
-                        <%= transacoes.length %> transações encontradas
-                    </span>
-                    <button class="btn-export" id="btnExport">
-                        <span>📊 Exportar</span>
-                    </button>
-                </div>
-            </div>
-            
-            <% if (transacoes && transacoes.length > 0) { %>
-                <div class="table-container">
-                    <table id="transactionsTable">
-                        <thead>
-                            <tr>
-                                <th data-sort="data">Data 📅</th>
-                                <th data-sort="descricao">Descrição</th>
-                                <th data-sort="categoria">Categoria</th>
-                                <th data-sort="tipo">Tipo</th>
-                                <th data-sort="valor">Valor R$</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% transacoes.forEach(function(transacao) { %>
-                                <tr class="transaction-row" 
-                                    data-tipo="<%= transacao.tipo %>" 
-                                    data-categoria="<%= transacao.categoria %>"
-                                    data-data="<%= transacao.data %>"
-                                    data-valor="<%= transacao.valor %>">
-                                    <td class="transaction-date">
-                                        <div class="date-display">
-                                            <span class="date-day"><%= new Date(transacao.data).getDate() %></span>
-                                            <span class="date-month"><%= new Date(transacao.data).toLocaleDateString('pt-BR', { month: 'short' }) %></span>
-                                        </div>
-                                    </td>
-                                    <td class="transaction-desc">
-                                        <div class="desc-text"><%= transacao.descricao %></div>
-                                        <% if (transacao.descricao.length > 30) { %>
-                                            <div class="desc-tooltip"><%= transacao.descricao %></div>
-                                        <% } %>
-                                    </td>
-                                    <td class="transaction-category">
-                                        <span class="category-badge category-<%= transacao.categoria.toLowerCase() %>">
-                                            <%= transacao.categoria %>
-                                        </span>
-                                    </td>
-                                    <td class="transaction-type">
-                                        <span class="type-badge type-<%= transacao.tipo.toLowerCase() %>">
-                                            <span class="type-icon">
-                                                <%= transacao.tipo === 'Entrada' ? '⬆️' : '⬇️' %>
-                                            </span>
-                                            <%= transacao.tipo %>
-                                        </span>
-                                    </td>
-                                    <td class="transaction-value">
-                                        <span class="value-amount <%= transacao.tipo.toLowerCase() %>">
-                                            R$ <%= transacao.valor.toFixed(2) %>
-                                        </span>
-                                    </td>
-                                    <td class="transaction-actions">
-                                        <div class="actions-container">
-                                            <button class="btn-action btn-edit" title="Editar">
-                                                <span>✏️</span>
-                                            </button>
-                                            <a href="/excluir/<%= transacao.id %>" 
-                                               class="btn-action btn-delete" 
-                                               title="Excluir"
-                                               onclick="return confirm('Tem certeza que deseja excluir esta transação?')">
-                                                <span>🗑️</span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                </div>
-            <% } else { %>
-                <div class="empty-state">
-                    <div class="empty-icon">📝</div>
-                    <h3>Nenhuma transação encontrada</h3>
-                    <p>Comece adicionando sua primeira transação ao sistema</p>
-                    <a href="/transacoes" class="btn-primary">
-                        <span>➕ Adicionar Primeira Transação</span>
-                    </a>
-                </div>
-            <% } %>
-        </div>
-
-        <!-- Resumo por Categoria -->
-        <% if (transacoes && transacoes.length > 0) { %>
-            <div class="categories-section">
-                <h3>Resumo por Categoria</h3>
-                <div class="categories-grid">
-                    <% 
-                        const categorias = {};
-                        transacoes.forEach(transacao => {
-                            if (!categorias[transacao.categoria]) {
-                                categorias[transacao.categoria] = { entradas: 0, saidas: 0 };
-                            }
-                            if (transacao.tipo === 'Entrada') {
-                                categorias[transacao.categoria].entradas += transacao.valor;
-                            } else {
-                                categorias[transacao.categoria].saidas += transacao.valor;
-                            }
-                        });
-                    %>
-                    <% Object.keys(categorias).forEach(categoria => { %>
-                        <div class="category-card">
-                            <div class="category-header">
-                                <h4><%= categoria %></h4>
-                                <span class="category-total">
-                                    R$ <%= (categorias[categoria].entradas - categorias[categoria].saidas).toFixed(2) %>
-                                </span>
-                            </div>
-                            <div class="category-stats">
-                                <div class="category-stat">
-                                    <span class="stat-label">Entradas:</span>
-                                    <span class="stat-value positive">R$ <%= categorias[categoria].entradas.toFixed(2) %></span>
-                                </div>
-                                <div class="category-stat">
-                                    <span class="stat-label">Saídas:</span>
-                                    <span class="stat-value negative">R$ <%= categorias[categoria].saidas.toFixed(2) %></span>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-            </div>
-        <% } %>
     </div>
 
-    <script src="/js/historico.js"></script>
+    <!-- Tabela de Histórico -->
+    <div class="table-section">
+        <div class="section-header">
+            <h3>Histórico Completo</h3>
+            <div class="section-actions">
+                <span class="transactions-count" id="transactionsCount">
+                    <%= transacoes.length %> transações encontradas
+                </span>
+                <button class="botao-padrao" id="btnExport">
+                    <span>📊 Exportar</span>
+                </button>
+            </div>
+        </div>
+        
+        <% if (transacoes && transacoes.length > 0) { %>
+            <div class="table-container">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th data-sort="data">Data 📅</th>
+                            <th data-sort="descricao">Descrição</th>
+                            <th data-sort="categoria">Categoria</th>
+                            <th data-sort="tipo">Tipo</th>
+                            <th data-sort="valor">Valor R$</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% transacoes.forEach(function(transacao) { %>
+                            <tr class="transaction-row" 
+                                data-tipo="<%= transacao.tipo %>" 
+                                data-categoria="<%= transacao.categoria %>"
+                                data-data="<%= transacao.data %>"
+                                data-valor="<%= transacao.valor %>">
+                                <td class="transaction-date">
+                                    <div class="date-display">
+                                        <span class="date-day"><%= new Date(transacao.data).getDate() %></span>
+                                        <span class="date-month"><%= new Date(transacao.data).toLocaleDateString('pt-BR', { month: 'short' }) %></span>
+                                    </div>
+                                </td>
+                                <td class="transaction-desc">
+                                    <div class="desc-text"><%= transacao.descricao %></div>
+                                    <% if (transacao.descricao.length > 30) { %>
+                                        <div class="desc-tooltip"><%= transacao.descricao %></div>
+                                    <% } %>
+                                </td>
+                                <td class="transaction-category">
+                                    <span class="category-badge category-<%= transacao.categoria.toLowerCase() %>">
+                                        <%= transacao.categoria %>
+                                    </span>
+                                </td>
+                                <td class="transaction-type">
+                                    <span class="type-badge type-<%= transacao.tipo.toLowerCase() %>">
+                                        <span class="type-icon">
+                                            <%= transacao.tipo === 'Entrada' ? '⬆️' : '⬇️' %>
+                                        </span>
+                                        <%= transacao.tipo %>
+                                    </span>
+                                </td>
+                                <td class="transaction-value">
+                                    <span class="value-amount <%= transacao.tipo.toLowerCase() %>">
+                                        R$ <%= transacao.valor.toFixed(2) %>
+                                    </span>
+                                </td>
+                                <td class="transaction-actions">
+                                    <div class="actions-container">
+                                        <button class="btn-action btn-edit" title="Editar">
+                                            <span id="editModalbtn">✏️</span>
+                                        </button>
+                                        <a href="/excluir/<%= transacao.id %>" 
+                                            class="btn-action btn-delete" 
+                                            title="Excluir"
+                                            onclick="return confirm('Tem certeza que deseja excluir esta transação?')">
+                                            <span>🗑️</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <h3>Nenhuma transação encontrada</h3>
+                <p>Comece adicionando sua primeira transação ao sistema</p>
+                <a href="/transacoes" class="btn-primary">
+                    <span>➕ Adicionar Primeira Transação</span>
+                </a>
+            </div>
+        <% } %>
+
+            <div class="table-container">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th data-sort="data">Data 📅</th>
+                            <th data-sort="descricao">Descrição</th>
+                            <th data-sort="categoria">Categoria</th>
+                            <th data-sort="tipo">Tipo</th>
+                            <th data-sort="valor">Valor R$</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabTransacoes">
+                        <!-- dados de trasações -->
+                        
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+    </div>
+
+        <script>
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalContainer = document.getElementById('modalContainer');
+            const editModalbtn = document.getElementById('editModalbtn');
+            const acaoModalBtn = document.getElementById('acaoModalBtn');
+            const tituloModal = document.getElementById('tituloModal');
+            const tabTransacoes = document.getElementById('tabTransacoes');
+
+
+
+            openModalBtn.addEventListener('click', () => {
+                modalContainer.dataset.tipo = "adicionar"
+                acaoModalBtn.innerText = "adicionar"
+                tituloModal.innerText = "Adicionar Transação"
+                modalContainer.classList.add('show');
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modalContainer.classList.remove('show');
+            });
+
+            modalContainer.addEventListener('click', (e) => {
+                if (e.target === modalContainer) {
+                    modalContainer.classList.remove('show');
+                }
+            });  
+            
+            editModalbtn.addEventListener('click', (e) => {
+                modalContainer.dataset.tipo = "modificar"
+                acaoModalBtn.innerText = "modificar"
+                tituloModal.innerText = "Modificar Transação"
+                modalContainer.classList.add('show');
+            });
+
+            modalContainer.addEventListener('transitionend', () => {
+                console.log('entrou aquiiiii')
+                if (modalContainer.classList.contains('show')) {
+                    if(modalContainer.dataset.tipo == "adicionar"){
+                        console.log("modal está adicionando")
+                    }
+                    if(modalContainer.dataset.tipo == "modificar"){
+                        console.log("modal está modificando")
+                    }
+                    
+                }
+            });           
+            
+            addlinha('2024-01-15','Salario',"Receita","Entrada",3000) 
+
+            function addlinha(data,descricao,categoria,tipo,valor){
+                
+                //cria uma nova linha
+                linha = document.createElement('tr');
+                linha.classList.add('transaction-row');
+                linha.setAttribute('tipo', 'Entrada');
+                linha.setAttribute('categoria', 'Receita');
+                linha.setAttribute('data', data);
+                linha.setAttribute('valor', '3000');
+                data = new Date(data);
+
+                // celula que contem a data da transação
+
+                celula_data = document.createElement('td');
+                celula_data.classList.add('transaction-date');
+                
+                celula_data_div = document.createElement('div');
+                celula_data_div.classList.add('date-display');
+                
+                celula_data_div_span1 = document.createElement('span');
+                celula_data_div_span1.classList.add('date-day');  
+
+                celula_data_div_span1.innerText = data.getDate().toString(); 
+
+                celula_data_div_span2 = document.createElement('span');
+                celula_data_div_span2.classList.add('date-month');
+                celula_data_div_span2.innerText = data.toLocaleString('default', { month: 'short' });
+
+                celula_data_div.appendChild(celula_data_div_span1)
+                celula_data_div.appendChild(celula_data_div_span2)
+                celula_data.appendChild(celula_data_div)
+
+                // celula que contem a descricao da transação
+
+                celula_descricao = document.createElement('td');
+                celula_descricao.classList.add('transaction-desc');
+                celula_descricao_div = document.createElement('div');
+                celula_descricao_div.classList.add('desc-text');
+                celula_descricao_div.innerText = descricao
+
+                celula_descricao.appendChild(celula_descricao_div)
+
+                    
+                // celula que contem a categoria da transação
+                celula_categoria = document.createElement('td');
+                celula_categoria.classList.add('transaction-category');
+                celula_categoria_span = document.createElement('span');
+                celula_categoria_span.classList.add('category-badge');
+                celula_categoria_span.classList.add('category-receita');
+                celula_categoria_span.innerText = categoria
+
+                celula_categoria.appendChild(celula_categoria_span)
+
+
+                // celula que contem o tipo da transação
+                celula_tipo = document.createElement('td');
+                celula_tipo.classList.add('transaction-type');
+                
+                celula_tipo_span = document.createElement('span');
+                celula_tipo_span.classList.add('type-badge');
+                celula_tipo_span.classList.add('type-entrada');
+                celula_tipo_span.innerText = tipo
+
+                celula_tipo_span_span = document.createElement('span');
+                celula_tipo_span_span.classList.add('type-icon');
+                celula_tipo_span_span.innerText = '⬆️'
+                
+                celula_tipo_span.appendChild(celula_tipo_span_span)
+                celula_tipo.appendChild(celula_tipo_span)
+
+
+
+                // celula que contem o valor da transação
+                celula_valor = document.createElement('td');
+                celula_valor.classList.add('transaction-value');
+                celula_valor_span = document.createElement('span');
+                celula_valor_span.classList.add('value-amount');
+                celula_valor_span.classList.add('entrada');
+                
+
+                
+                celula_valor_span.innerText = valor.toLocaleString('pt-BR', {
+                                                                                style: 'currency',
+                                                                                currency: 'BRL',
+                                                                                minimumFractionDigits: 2
+                                                                    });
+                
+                celula_valor.appendChild(celula_valor_span)
+                
+
+                // celula que contem as ações da transação
+                celula_acoes = document.createElement('td');
+                celula_acoes.classList.add('transaction-actions');
+                celula_acoes_div = document.createElement('div');
+                celula_acoes_div.classList.add('actions-container');
+                celula_acoes_button = document.createElement('button');
+                celula_acoes_button.classList.add('btn-action');
+                celula_acoes_button.classList.add('btn-edit');
+                celula_acoes_button.title = "Editar"
+                celula_acoes_button_span = document.createElement('span');
+                celula_acoes_button_span.id = "editModalbtn"
+                celula_acoes_button_span.innerText = '✏️'
+                celula_acoes_div_a = document.createElement('a');
+                celula_acoes_div_a.href = "/excluir/1" 
+                celula_acoes_div_a.classList.add('btn-action');
+                celula_acoes_div_a.classList.add('btn-delete');
+                celula_acoes_div_a.title = "Excluir"
+                celula_acoes_div_a.onclick =''
+                celula_acoes_div_a_span = document.createElement('span');
+                celula_acoes_div_a_span.innerText = '🗑️'
+
+                celula_acoes_div_a.appendChild(celula_acoes_div_a_span)
+                celula_acoes_button.appendChild(celula_acoes_button_span)
+                celula_acoes_div.appendChild(celula_acoes_div_a)
+                celula_acoes_div.appendChild(celula_acoes_button)
+                celula_acoes.appendChild(celula_acoes_div)
+
+
+                linha.appendChild(celula_data)
+                linha.appendChild(celula_descricao)
+                linha.appendChild(celula_categoria)
+                linha.appendChild(celula_tipo)
+                linha.appendChild(celula_valor)
+                linha.appendChild(celula_acoes)
+
+                tabTransacoes.appendChild(linha)
+
+            }
+
+        </script>        
+    
 </body>
-</html>

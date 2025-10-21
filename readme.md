@@ -26,12 +26,11 @@ Ajuda pessoas a controlar suas financas. Projeto sendo desenvolvido como trabalh
 
 #### 2. Criar o commmit
 
+
 `git commit -m 'descrição resumida'`
 
 #### 3. Atualizar o repositório remoto
 
 `git push origin main`
 
-`git add .
->> git commit -m "Atualiza estilos e adiciona novas views"
->> git push origin main`
+

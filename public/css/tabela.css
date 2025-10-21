@@ -1,0 +1,90 @@
+/* ===== TABELA ===== */
+.table-container {
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+thead {
+    background: var(--primary-gradient);
+}
+
+th {
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+th:first-child {
+    border-top-left-radius: 12px;
+}
+
+th:last-child {
+    border-top-right-radius: 12px;
+}
+
+tbody tr {
+    transition: var(--transition-smooth);
+    border-bottom: 1px solid var(--border-color);
+}
+
+tbody tr:hover {
+    background: rgba(99, 102, 241, 0.1);
+    transform: scale(1.01);
+}
+
+td {
+    padding: 1.2rem 1rem;
+    color: var(--text-secondary);
+}
+
+.entrada {
+    color: #10b981;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.entrada::before {
+    content: '↑';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+}
+
+.saida {
+    color: #ef4444;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.saida::before {
+    content: '↓';
+    position: absolute;
+    left: 0;
+    color: #ef4444;
+}
+
+
+/* ===== ESTADO VAZIO ===== */
+.table-container p {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    font-style: italic;
+}

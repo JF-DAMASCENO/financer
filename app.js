@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const principalRoutes = require('./routes/principal.route');
+const principalRoutes = require('./routes/principal.routes');
 
 // Configura o EJS como template engine
 app.set('view engine', 'ejs');
@@ -14,26 +14,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Importa as rotas principais
-app.use('/', principalRoutes);
 
 // Rota raiz redireciona para o login
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
 
+// Importa as rotas principais
+app.use('/', principalRoutes);
+
+
 // Middleware de erro 404
 app.use((req, res) => {
-    res.status(404).render('404', {
-        titulo: 'Página Não Encontrada'
+    res.status(404).render('erro', {
+        titulo: '404 - Página Não Encontrada'
     });
 });
 
 // Middleware de erro 500
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).render('500', {
-        titulo: 'Erro Interno do Servidor'
+    res.status(500).render('erro', {
+        titulo: '500 - Erro Interno do Servidor'
     });
 });
 

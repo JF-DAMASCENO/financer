@@ -1,0 +1,23 @@
+/* Modal */
+.modal {
+    display: none; /* Modal começa oculto */
+    position: fixed;
+    z-index: 1; /* Fica sobre outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+    overflow: auto; /* Caso o conteúdo ultrapasse a altura da tela */
+}
+
+/* Conteúdo do Modal */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%; /* Ajuste o tamanho conforme necessário */
+    max-width: 600px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

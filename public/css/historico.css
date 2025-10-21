@@ -498,32 +498,7 @@ body {
     justify-content: center;
 }
 
-.btn-action {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    padding: 0.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    font-size: 0.9rem;
-    text-decoration: none;
-    color: inherit;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.btn-edit:hover {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
-    transform: scale(1.1);
-}
-
-.btn-delete:hover {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: #ef4444;
-    transform: scale(1.1);
-}
 
 /* ===== ESTADO VAZIO ===== */
 .empty-state {
@@ -547,24 +522,6 @@ body {
 .empty-state p {
     margin-bottom: 2rem;
     font-size: 1.1rem;
-}
-
-.btn-primary {
-    background: var(--primary-gradient);
-    color: white;
-    text-decoration: none;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: var(--transition-smooth);
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
 }
 
 /* ===== SEÇÃO DE CATEGORIAS ===== */

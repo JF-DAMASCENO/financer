@@ -1,0 +1,38 @@
+/* Seção de resumo */
+.summary {
+    margin-bottom: 30px;
+}
+
+.summary h2 {
+    color: #555;
+}
+
+.summary-cards {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
+    text-align: center;
+}
+
+.card.income h3,
+.card.income p {
+    color: #28a745;
+}
+
+.card.expense h3,
+.card.expense p {
+    color: #dc3545;
+}
+
+.card.balance h3,
+.card.balance p {
+    color: #007bff;
+}

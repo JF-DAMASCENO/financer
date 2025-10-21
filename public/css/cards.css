@@ -1,38 +1,69 @@
-/* Seção de resumo */
-.summary {
-    margin-bottom: 30px;
-}
-
-.summary h2 {
-    color: #555;
-}
-
-.summary-cards {
-    display: flex;
-    justify-content: space-around;
-    gap: 20px;
+/* ===== CARDS DE RESUMO ===== */
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
 
 .card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    flex-grow: 1;
+    background: var(--bg-card);
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
     text-align: center;
+    transition: var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
 }
 
-.card.income h3,
-.card.income p {
-    color: #28a745;
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: var(--transition-smooth);
 }
 
-.card.expense h3,
-.card.expense p {
-    color: #dc3545;
+.card:hover::before {
+    left: 100%;
 }
 
-.card.balance h3,
-.card.balance p {
-    color: #007bff;
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+.card.entradas {
+    background: var(--success-gradient);
+    color: white;
+}
+
+.card.saidas {
+    background: var(--danger-gradient);
+    color: white;
+}
+
+.card.saldo {
+    background: var(--dark-gradient);
+    color: white;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.valor {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
